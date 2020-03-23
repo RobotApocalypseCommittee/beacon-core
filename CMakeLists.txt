@@ -10,5 +10,7 @@ endif ()
 
 add_subdirectory(cryptopp)
 
-add_executable(beacon_core library.cpp library.h)
+include_directories(include)
+
+add_executable(beacon_core library.cpp library.h src/crypto/keys.cpp include/crypto/keys.h)
 target_link_libraries(beacon_core cryptopp-static)
