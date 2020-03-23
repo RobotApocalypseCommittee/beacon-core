@@ -1,6 +1,14 @@
-# cmake_minimum_required(VERSION <specify CMake version here>)
+cmake_minimum_required(VERSION 3.14)
 project(beacon_core)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_library(beacon_core library.cpp library.h)
+if (NOT EXISTS "${CMAKE_SOURCE_DIR}/cryptopp/CMakeLists.txt")
+    file(DOWNLOAD https://raw.githubusercontent.com/noloader/cryptopp-cmake/master/CMakeLists.txt "${CMAKE_SOURCE_DIR}/cryptopp/CMakeLists.txt" SHOW_PROGRESS)
+    file(DOWNLOAD https://raw.githubusercontent.com/noloader/cryptopp-cmake/master/cryptopp-config.cmake "${CMAKE_SOURCE_DIR}/cryptopp/cryptopp-config.cmake" SHOW_PROGRESS)
+endif ()
+
+add_subdirectory(cryptopp)
+
+add_executable(beacon_core library.cpp library.h)
+target_link_libraries(beacon_core cryptopp-static)
