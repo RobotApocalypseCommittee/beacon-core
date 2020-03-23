@@ -1,0 +1,6 @@
+#ifndef BEACON_CORE_LIBRARY_H
+#define BEACON_CORE_LIBRARY_H
+
+void hello();
+
+#endif //BEACON_CORE_LIBRARY_H
