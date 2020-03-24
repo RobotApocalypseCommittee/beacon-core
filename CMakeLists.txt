@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.10)
 project(beacon_core)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -17,5 +17,5 @@ add_subdirectory(cryptopp)
 
 include_directories(include)
 
-add_executable(beacon_core library.cpp library.h src/crypto/keys.cpp include/crypto/keys.h)
+add_executable(beacon_core library.cpp library.h src/crypto/keys.cpp include/crypto/keys.h src/crypto/encrypt.cpp include/crypto/encrypt.h)
 target_link_libraries(beacon_core cryptopp-static)
