@@ -3,7 +3,6 @@ project(beacon_core)
 
 set(CMAKE_CXX_STANDARD 17)
 
-
 if (NOT EXISTS "${CMAKE_SOURCE_DIR}/cryptopp/CMakeLists.txt")
     if (EXISTS "${CMAKE_SOURCE_DIR}/cryptopp/.travis.yml")
         file(DOWNLOAD https://raw.githubusercontent.com/noloader/cryptopp-cmake/master/CMakeLists.txt "${CMAKE_SOURCE_DIR}/cryptopp/CMakeLists.txt" SHOW_PROGRESS)

@@ -67,5 +67,45 @@ int main() {
 
     std::cout << "DEC RSA: " << out2 << std::endl;
 
+    byte pubdA[384];
+    byte privdA[384];
+
+    generate_DH_keypair(privdA, pubdA);
+
+    std::cout << "DH Priv: " << hex_string(privdA, 384) << std::endl;
+    std::cout << "DH Pub: " << hex_string(pubdA, 384) << std::endl;
+
+    byte pubdB[384];
+    byte privdB[384];
+
+    generate_DH_keypair(privdB, pubdB);
+
+    byte shared[384];
+    byte shared2[384];
+
+    calculate_DH_output(shared, privdA, pubdB);
+    calculate_DH_output(shared2, privdB, pubdA);
+
+    std::cout << "Agreed key 1: " << hex_string(shared, 100) << std::endl;
+    std::cout << "Agreed key 2: " << hex_string(shared2, 100) << std::endl;
+
+    byte rk[SHA256::DIGESTSIZE];
+    byte ck[SHA256::DIGESTSIZE];
+    byte mk[SHA256::DIGESTSIZE];
+    byte ck2[SHA256::DIGESTSIZE];
+    byte rk2[SHA256::DIGESTSIZE];
+
+    generate_root_key(rk);
+
+    update_root_key(rk2, ck, rk, shared);
+
+    update_chain_key(ck2, mk, ck);
+
+    std::cout << "RK: " << hex_string(rk, sizeof(rk)) << std::endl;
+    std::cout << "CK: " << hex_string(ck, sizeof(ck)) << std::endl;
+    std::cout << "MK: " << hex_string(mk, sizeof(mk)) << std::endl;
+    std::cout << "CK2: " << hex_string(ck2, sizeof(ck2)) << std::endl;
+    std::cout << "RK2: " << hex_string(rk2, sizeof(rk2)) << std::endl;
+
     std::cout << "Hello, World!" << std::endl;
 }

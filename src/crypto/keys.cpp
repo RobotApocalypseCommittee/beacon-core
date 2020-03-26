@@ -4,8 +4,12 @@
 
 #include "../../include/crypto/keys.h"
 
+#include <iostream>
+
 #include <pwdbased.h>
 #include <osrng.h>
+#include <dh.h>
+#include <hkdf.h>
 
 using namespace CryptoPP;
 
@@ -67,4 +71,56 @@ size_t derive_public_key(byte *pubkey, const byte *privkey, const size_t p_lengt
     size_t length = get_bytes_from_key(pubkey, publicKey);
 
     return length;
+}
+
+unsigned int generate_root_key(byte *root_key) {
+    AutoSeededRandomPool rnd;
+
+    // AES256 -> 32 bytes
+    rnd.GenerateBlock(root_key, 32);
+
+    return 0;
+}
+
+unsigned int generate_DH_keypair(byte *dh_privkey, byte *dh_pubkey) {
+    // Both are of size 384 bytes!
+    AutoSeededRandomPool rng;
+    DH dh;
+    dh.AccessGroupParameters().Initialize(DH_P, DH_G);
+
+    dh.GenerateKeyPair(rng, dh_privkey, dh_pubkey);
+
+    return 0;
+}
+
+unsigned int calculate_DH_output(byte *dh_out, const byte *dh_privkey, const byte *dh_pubkey) {
+    // All are of size 384 bytes!
+    DH dh;
+    dh.AccessGroupParameters().Initialize(DH_P, DH_G);
+
+    dh.Agree(dh_out, dh_privkey, dh_pubkey);
+
+    return 0;
+}
+
+unsigned int update_root_key(byte *root_key_out, byte *chain_key_out, const byte *root_key_in, const byte *dh_output) {
+    HKDF<SHA256> hkdf;
+
+    // That just is the dh_output length
+    hkdf.DeriveKey(root_key_out, SHA256::DIGESTSIZE, root_key_in, SHA256::DIGESTSIZE, dh_output, 384, RK_INFO, 1);
+    hkdf.DeriveKey(chain_key_out, SHA256::DIGESTSIZE, root_key_in, SHA256::DIGESTSIZE, dh_output, 384, CK_INFO, 1);
+    // TODO check right length output
+
+    return 0;
+}
+
+unsigned int update_chain_key(byte *chain_key_out, byte *message_key_out, const byte *chain_key_in) {
+    HKDF<SHA256> hkdf;
+
+    // Salt is just the "constant", no need for randomisation
+    hkdf.DeriveKey(chain_key_out, SHA256::DIGESTSIZE, chain_key_in, SHA256::DIGESTSIZE, CK_INFO2, 1, nullptr, 0);
+    hkdf.DeriveKey(message_key_out, SHA256::DIGESTSIZE, chain_key_in, SHA256::DIGESTSIZE, MK_INFO, 1, nullptr, 0);
+    // TODO check right length output
+
+    return 0;
 }
