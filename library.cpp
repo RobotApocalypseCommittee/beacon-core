@@ -8,6 +8,8 @@
 #include "crypto/keys.h"
 #include "crypto/encrypt.h"
 
+#include "message.pb.h"
+
 std::string hex_string(byte *bytes, size_t length) {
     std::string result;
     HexEncoder encoder(new StringSink(result));

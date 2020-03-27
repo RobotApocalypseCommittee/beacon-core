@@ -1,0 +1,4 @@
+message ChatMessage {
+  required string text = 1;
+  required int64 id = 2;
+}
