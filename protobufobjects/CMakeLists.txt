@@ -1,8 +1,10 @@
 if (NOT EXISTS "${CMAKE_SOURCE_DIR}/protobuf/cmake/CMakeLists.txt")
     message(FATAL_ERROR "protobuf not found! Make sure you do git submodule update --init --recursive")
 endif()
+
 set(BUILD_SHARED_LIBS OFF)
 add_subdirectory(${CMAKE_SOURCE_DIR}/protobuf/cmake ${CMAKE_BINARY_DIR}/protobuf)
+
 project(beacon_protobufobjects)
 
 set(PROTOBUF_FILES message.proto)

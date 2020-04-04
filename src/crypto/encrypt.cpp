@@ -59,3 +59,21 @@ size_t decrypt_rsa(byte *out, const byte *in, const size_t length, const byte *p
 
     return result.messageLength;
 }
+
+size_t sign_rsa(byte *out, const byte *in, const size_t length, const byte *privkey, const size_t privkey_length) {
+    // Probably always 384 bytes (3072 bits)
+    AutoSeededRandomPool rnd;
+
+    RSA::PrivateKey privateKey = load_private_key_from_bytes(privkey, privkey_length);
+    RSASS<PKCS1v15, SHA256>::Signer signer(privateKey);
+
+    return signer.SignMessage(rnd, in, length, out);
+}
+
+bool verify_rsa(const byte *sig, const size_t sig_length, const byte *message, const size_t message_length,
+                const byte *pubkey, const size_t pubkey_length) {
+    RSA::PublicKey publicKey = load_public_key_from_bytes(pubkey, pubkey_length);
+    RSASS<PKCS1v15, SHA256>::Verifier verifier(publicKey);
+
+    return verifier.VerifyMessage(message, message_length, sig, sig_length);
+}

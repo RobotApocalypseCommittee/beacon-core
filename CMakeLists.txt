@@ -12,18 +12,23 @@ if (MSVC) # Makes it statically link the visual C/C++ libs
             CMAKE_C_FLAGS_DEBUG
             CMAKE_C_FLAGS_RELEASE
             )
-    foreach(CompilerFlag ${CompilerFlags})
+    foreach (CompilerFlag ${CompilerFlags})
         string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
-    endforeach()
-endif()
+    endforeach ()
+endif ()
+
+if (NOT EXISTS "${CMAKE_SOURCE_DIR}/cryptopp/.travis.yml")
+    message(FATAL_ERROR "CryptoPP not found! Make sure you do: git submodule update --init --recursive")
+endif ()
+
+set(Protobuf_LIBRARIES "${CMAKE_BUILD_DIR}/protobuf/cmake")
+set(Protobuf_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/protobuf/src")
+
+find_package(Protobuf REQUIRED)
 
 if (NOT EXISTS "${CMAKE_SOURCE_DIR}/cryptopp/CMakeLists.txt")
-    if (EXISTS "${CMAKE_SOURCE_DIR}/cryptopp/.travis.yml")
-        file(DOWNLOAD https://raw.githubusercontent.com/noloader/cryptopp-cmake/master/CMakeLists.txt "${CMAKE_SOURCE_DIR}/cryptopp/CMakeLists.txt" SHOW_PROGRESS)
-        file(DOWNLOAD https://raw.githubusercontent.com/noloader/cryptopp-cmake/master/cryptopp-config.cmake "${CMAKE_SOURCE_DIR}/cryptopp/cryptopp-config.cmake" SHOW_PROGRESS)
-    else ()
-        message(FATAL_ERROR "CryptoPP not found! Make sure you do git submodule update --init --recursive")
-    endif ()
+    file(DOWNLOAD https://raw.githubusercontent.com/noloader/cryptopp-cmake/master/CMakeLists.txt "${CMAKE_SOURCE_DIR}/cryptopp/CMakeLists.txt" SHOW_PROGRESS)
+    file(DOWNLOAD https://raw.githubusercontent.com/noloader/cryptopp-cmake/master/cryptopp-config.cmake "${CMAKE_SOURCE_DIR}/cryptopp/cryptopp-config.cmake" SHOW_PROGRESS)
 endif ()
 
 add_subdirectory(protobufobjects)

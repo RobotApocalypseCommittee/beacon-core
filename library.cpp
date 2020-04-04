@@ -109,5 +109,16 @@ int main() {
     std::cout << "CK2: " << hex_string(ck2, sizeof(ck2)) << std::endl;
     std::cout << "RK2: " << hex_string(rk2, sizeof(rk2)) << std::endl;
 
+    byte signature[384];
+    size_t siglen = sign_rsa(signature, in, inlen, priv, klen);
+    bool verified = verify_rsa(signature, siglen, in, inlen, pub, pklen);
+
+    signature[0] += 1;
+    bool verified2 = verify_rsa(signature, siglen, in, inlen, pub, pklen);
+
+    std::cout << "Signature: " << hex_string(signature, 384) << std::endl;
+    std::cout << "Verified? " << (verified ? "True" : "False") << std::endl;
+    std::cout << "Verified False? " << (verified2 ? "True" : "False") << std::endl;
+
     std::cout << "Hello, World!" << std::endl;
 }
